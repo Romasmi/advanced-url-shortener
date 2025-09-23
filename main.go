@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"shorturl/internal/config"
+)
 
 func main() {
-	fmt.Println("Hello world")
+	envConfig, err := config.LoadConfig()
+	if err != nil {
+		fmt.Printf("error loading config: %v\n", err)
+		return
+	}
+	fmt.Println(envConfig.Database)
 }
