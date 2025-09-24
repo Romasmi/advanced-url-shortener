@@ -8,16 +8,25 @@ import (
 )
 
 type Config struct {
-	Database DatabaseConfig `mapstructure:"database"`
-	Server   ServerConfig   `mapstructure:"server"`
+	Database DatabaseConfig
+	Server   ServerConfig
 }
 
 type DatabaseConfig struct {
-	URL string `mapstructure:"url"`
+	URL                   string
+	MaxConnections        uint
+	MinConnections        uint
+	MaxConnectionLifetime uint
+	MaxConnectionIdleTime uint
 }
 
 type ServerConfig struct {
-	Port uint `mapstructure:"port"`
+	Port uint
+}
+
+func FirstChatToLowerCase(str string) string {
+	firstChar := str[:1]
+	return strings.ToLower(firstChar) + str[1:]
 }
 
 func bindEnvRecursive(viperInstance *viper.Viper, prefix string, val reflect.Value) error {
@@ -25,7 +34,7 @@ func bindEnvRecursive(viperInstance *viper.Viper, prefix string, val reflect.Val
 		field := val.Type().Field(i)
 		tag := field.Tag.Get("mapstructure")
 		if tag == "" {
-			continue
+			tag = FirstChatToLowerCase(field.Name)
 		}
 
 		fieldPath := prefix
@@ -54,11 +63,11 @@ func bindAllEnvVars(viperInstance *viper.Viper) error {
 	return bindEnvRecursive(viperInstance, "", reflect.ValueOf(&Config{}).Elem())
 }
 
-func LoadConfig() (*Config, error) {
+func LoadConfig(configPath string) (*Config, error) {
 	v := viper.New()
 	v.SetConfigName("config")
 	v.SetConfigType("yaml")
-	v.AddConfigPath(".")
+	v.AddConfigPath(configPath)
 
 	if err := v.ReadInConfig(); err != nil {
 		return nil, err

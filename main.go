@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	envConfig, err := config.LoadConfig()
+	envConfig, err := config.LoadConfig(".")
 	if err != nil {
 		fmt.Printf("error loading config: %v\n", err)
 		return

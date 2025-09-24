@@ -1,4 +1,8 @@
 database:
   url: postgres://user:pass@localhost:5432/app
+  maxConnections: 10
+  minConnection: 2
+  maxConnectionLifetime: 60 # seconds
+  maxConnectionIdleTime: 1 # minutes
 server:
   port: 8080
