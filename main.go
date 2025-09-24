@@ -11,5 +11,5 @@ func main() {
 		fmt.Printf("error loading config: %v\n", err)
 		return
 	}
-	fmt.Println(envConfig.Database)
+	fmt.Println(envConfig)
 }

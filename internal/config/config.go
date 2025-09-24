@@ -54,16 +54,14 @@ func bindAllEnvVars(viperInstance *viper.Viper) error {
 	return bindEnvRecursive(viperInstance, "", reflect.ValueOf(&Config{}).Elem())
 }
 
-func LoadConfig() (Config, error) {
-	var cfg Config
-
+func LoadConfig() (*Config, error) {
 	v := viper.New()
 	v.SetConfigName("config")
 	v.SetConfigType("yaml")
 	v.AddConfigPath(".")
 
 	if err := v.ReadInConfig(); err != nil {
-		return cfg, err
+		return nil, err
 	}
 
 	v2 := viper.New()
@@ -73,16 +71,17 @@ func LoadConfig() (Config, error) {
 	if err := v2.ReadInConfig(); err == nil {
 		err := v.MergeConfigMap(v2.AllSettings())
 		if err != nil {
-			return cfg, err
+			return nil, err
 		}
 	}
 
 	if err := bindAllEnvVars(v); err != nil {
-		return cfg, err
+		return nil, err
 	}
 
+	var cfg Config
 	if err := v.Unmarshal(&cfg); err != nil {
-		return cfg, err
+		return nil, err
 	}
-	return cfg, nil
+	return &cfg, nil
 }
