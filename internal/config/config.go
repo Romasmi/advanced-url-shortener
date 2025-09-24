@@ -2,6 +2,7 @@ package config
 
 import (
 	"reflect"
+	"shorturl/internal/utils"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -24,17 +25,12 @@ type ServerConfig struct {
 	Port uint
 }
 
-func FirstChatToLowerCase(str string) string {
-	firstChar := str[:1]
-	return strings.ToLower(firstChar) + str[1:]
-}
-
 func bindEnvRecursive(viperInstance *viper.Viper, prefix string, val reflect.Value) error {
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Type().Field(i)
 		tag := field.Tag.Get("mapstructure")
 		if tag == "" {
-			tag = FirstChatToLowerCase(field.Name)
+			tag = utils.FirstChatToLowerCase(field.Name)
 		}
 
 		fieldPath := prefix
