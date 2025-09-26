@@ -72,7 +72,7 @@ func LoadConfig(configPath string) (*Config, error) {
 	v2 := viper.New()
 	v2.SetConfigName("override")
 	v2.SetConfigType("yaml")
-	v2.AddConfigPath(".")
+	v2.AddConfigPath(configPath)
 	if err := v2.ReadInConfig(); err == nil {
 		err := v.MergeConfigMap(v2.AllSettings())
 		if err != nil {
