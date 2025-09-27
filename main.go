@@ -2,22 +2,16 @@ package main
 
 import (
 	"fmt"
-	"shorturl/internal/config"
-	"shorturl/internal/database"
+	"shorturl/internal/application"
 )
 
 func main() {
-	envConfig, err := config.LoadConfig(".")
+	app := &application.App{}
+	err := app.InitApp()
 	if err != nil {
-		fmt.Printf("error loading config: %v\n", err)
+		fmt.Printf("error while app initialization: %v", err)
 		return
 	}
-	fmt.Println(envConfig)
+	defer app.OnStop()
 
-	dbConn := &database.DbConnection{Config: envConfig}
-	err = dbConn.Connect()
-	if err != nil {
-		fmt.Printf("error connecting to DB: %v\n", err)
-	}
-	defer dbConn.Close()
 }
