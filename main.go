@@ -19,5 +19,5 @@ func main() {
 	if err != nil {
 		fmt.Printf("error connecting to DB: %v\n", err)
 	}
-
+	defer dbConn.Close()
 }

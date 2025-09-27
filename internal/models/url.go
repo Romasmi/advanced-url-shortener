@@ -8,3 +8,8 @@ type Url struct {
 	ShortUrl    string    `json:"short_url"`
 	CreatedAt   time.Time `json:"created_at"`
 }
+
+type UrlCreate struct {
+	OriginalUrl string `json:"original_url"`
+	ShortUrl    string `json:"short_url"`
+}
