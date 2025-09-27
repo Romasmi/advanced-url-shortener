@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"testing"
 )
@@ -41,8 +40,6 @@ server:
 	if err != nil {
 		t.Fatalf("Error while loading config: %v", err)
 	}
-
-	fmt.Println("Hello", config)
 
 	expected := uint(10)
 	if config.Database.MaxConnections != expected {
