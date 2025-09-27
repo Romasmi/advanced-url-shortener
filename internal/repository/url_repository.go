@@ -27,10 +27,6 @@ func NewUrlRepository(db *pgxpool.Pool) *UrlRepository {
 }
 
 func (r *UrlRepository) Create(ctx context.Context, url *models.Url) (*models.Url, error) {
-	if url.ID == "" {
-		url.ID = "generated guid"
-	}
-
 	query := fmt.Sprintf(`
 		INSERT INTO %v (id, original_url, short_url)
 		VALUES ($1, $2, $3)
