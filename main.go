@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"shorturl/internal/config"
+	"shorturl/internal/database"
 )
 
 func main() {
@@ -12,4 +13,11 @@ func main() {
 		return
 	}
 	fmt.Println(envConfig)
+
+	dbConn := &database.DbConnection{Config: envConfig}
+	err = dbConn.Connect()
+	if err != nil {
+		fmt.Printf("error connecting to DB: %v\n", err)
+	}
+
 }

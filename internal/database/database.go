@@ -12,18 +12,19 @@ import (
 )
 
 type DbConnection struct {
-	DB *pgxpool.Pool
+	DB     *pgxpool.Pool
+	Config *config.Config
 }
 
-func (c *DbConnection) Connect(config *config.Config) error {
-	pgConfig, err := pgxpool.ParseConfig(config.Database.URL)
+func (c *DbConnection) Connect() error {
+	pgConfig, err := pgxpool.ParseConfig(c.Config.Database.URL)
 	if err != nil {
 		return fmt.Errorf("unable to parse database URL: %w", err)
 	}
-	pgConfig.MaxConns = int32(config.Database.MaxConnections)
-	pgConfig.MinConns = int32(config.Database.MinConnections)
-	pgConfig.MaxConnLifetime = utils.MinutesToNanoseconds(config.Database.MaxConnectionLifetime)
-	pgConfig.MaxConnIdleTime = utils.MinutesToNanoseconds(config.Database.MaxConnectionIdleTime)
+	pgConfig.MaxConns = int32(c.Config.Database.MaxConnections)
+	pgConfig.MinConns = int32(c.Config.Database.MinConnections)
+	pgConfig.MaxConnLifetime = utils.MinutesToNanoseconds(c.Config.Database.MaxConnectionLifetime)
+	pgConfig.MaxConnIdleTime = utils.MinutesToNanoseconds(c.Config.Database.MaxConnectionIdleTime)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
