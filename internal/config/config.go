@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Database DatabaseConfig
 	Server   ServerConfig
+	App      App
 }
 
 type DatabaseConfig struct {
@@ -23,6 +24,11 @@ type DatabaseConfig struct {
 
 type ServerConfig struct {
 	Port uint
+}
+
+type App struct {
+	UrlCodeLength uint
+	MaxAttempts   uint
 }
 
 func bindEnvRecursive(viperInstance *viper.Viper, prefix string, val reflect.Value) error {

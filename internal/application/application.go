@@ -34,7 +34,7 @@ func (app *App) InitApp(configPath string) error {
 	}
 	app.dbConn = dbConn
 	app.router = mux.NewRouter()
-	routes.RegisterRoutes(app.router, app.dbConn.DB)
+	routes.RegisterRoutes(app.router, app.dbConn.DB, app.config)
 	return nil
 }
 

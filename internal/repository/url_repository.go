@@ -37,7 +37,7 @@ func (r *UrlRepository) Create(ctx context.Context, url *models.Url) (*models.Ur
 	`, UrlsTable)
 
 	var newUrl *models.Url
-	err := r.db.QueryRow(ctx, query, url.ID, url.OriginalUrl, url.ShortUrl).Scan(&newUrl)
+	err := r.db.QueryRow(ctx, query, url.ID, url.OriginalUrl, url.Code).Scan(&newUrl)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -52,20 +52,29 @@ func (r *UrlRepository) Create(ctx context.Context, url *models.Url) (*models.Ur
 }
 
 func (r *UrlRepository) GetByOriginalUrl(ctx context.Context, originalUrl string) (*models.Url, error) {
+	return r.getByColumn(ctx, "original_url", originalUrl)
+}
+
+func (r *UrlRepository) GetByCode(ctx context.Context, code string) (*models.Url, error) {
+	return r.getByColumn(ctx, "code", code)
+}
+
+func (r *UrlRepository) getByColumn(ctx context.Context, columnName, value string) (*models.Url, error) {
 	query := fmt.Sprintf(`
-		SELECT * 
-		FROM %v
-		WHERE original_url = $1
-		LIMIT 1
-	`, UrlsTable)
-	var url *models.Url
-	err := r.db.QueryRow(ctx, query, originalUrl).Scan(&url)
+        SELECT * 
+        FROM %v
+        WHERE %s = $1
+        LIMIT 1
+    `, UrlsTable, columnName)
+
+	var url models.Url
+	err := r.db.QueryRow(ctx, query, value).Scan(&url)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound
 		}
-		return nil, fmt.Errorf("failed to get user: %w", err)
+		return nil, fmt.Errorf("failed to get url by %s: %w", columnName, err)
 	}
 
-	return url, nil
+	return &url, nil
 }

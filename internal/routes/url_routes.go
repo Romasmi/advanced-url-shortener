@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"shorturl/internal/config"
 	"shorturl/internal/handlers"
 	"shorturl/internal/repository"
 	"shorturl/internal/services"
@@ -10,8 +11,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterUrlRoutes(router *mux.Router, db *pgxpool.Pool) {
-	urlHandler := &handlers.UrlHandler{UrlService: &services.UrlService{UrlRepository: repository.NewUrlRepository(db)}}
+func RegisterUrlRoutes(router *mux.Router, db *pgxpool.Pool, config *config.Config) {
+	urlService := &services.UrlService{UrlRepository: repository.NewUrlRepository(db), Config: config}
+	urlHandler := &handlers.UrlHandler{UrlService: urlService}
 
 	router.HandleFunc("/v1/urls", urlHandler.Create).Methods(http.MethodPost)
 }

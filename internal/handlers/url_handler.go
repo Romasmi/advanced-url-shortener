@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"shorturl/internal/models"
 	"shorturl/internal/repository"
 	"shorturl/internal/services"
 )
@@ -14,21 +13,28 @@ type UrlHandler struct {
 	UrlService *services.UrlService
 }
 
+type CreateUrlRequest struct {
+	Url string `json:"url"`
+}
+
 func (h *UrlHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var url models.UrlCreate
-	if err := json.NewDecoder(r.Body).Decode(&url); err != nil {
+	var requestPayload CreateUrlRequest
+	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	newUrl, err := h.UrlService.Create(r.Context(), &url)
+	// Original URL is not processed intentionally because it might have some important parameters in query string etc
+	newUrl, err := h.UrlService.Create(r.Context(), requestPayload.Url)
 	if err != nil {
 		if errors.Is(err, repository.ErrDuplicate) {
-			http.Error(w, "url already exists", http.StatusBadRequest)
-			return
+			// if it's a duplicate then return existing link
+			newUrl, err = h.UrlService.GetByOriginalUrl(r.Context(), requestPayload.Url)
 		}
-		/// TODO log error
-		http.Error(w, "internal error - try again", http.StatusInternalServerError)
+		// TODO log error
+		if err != nil {
+			http.Error(w, "internal error - try again", http.StatusInternalServerError)
+		}
 	}
 
 	err = json.NewEncoder(w).Encode(newUrl)

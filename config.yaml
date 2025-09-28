@@ -6,3 +6,6 @@ database:
   maxConnectionIdleTime: 1 # minutes
 server:
   port: 8000
+app:
+  urlCodeLength: 8
+  maxAttempts: 10
