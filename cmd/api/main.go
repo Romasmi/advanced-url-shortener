@@ -7,7 +7,7 @@ import (
 
 func main() {
 	app := &application.App{}
-	err := app.InitApp()
+	err := app.InitApp("../../")
 	if err != nil {
 		fmt.Printf("error while app initialization: %v", err)
 		return

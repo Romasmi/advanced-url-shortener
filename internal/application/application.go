@@ -13,8 +13,8 @@ type App struct {
 	// TODO add logger
 }
 
-func (app *App) InitApp() error {
-	envConfig, err := config.LoadConfig(".")
+func (app *App) InitApp(configPath string) error {
+	envConfig, err := config.LoadConfig(configPath)
 	if err != nil {
 		return fmt.Errorf("error loading config: %v\n", err)
 	}
