@@ -13,6 +13,10 @@ type NotFoundResponse struct {
 }
 
 func RegisterRoutes(router *mux.Router, db *pgxpool.Pool) {
+	if router == nil {
+		panic("router must be initialized before routes registration")
+	}
+
 	RegisterUrlRoutes(router, db)
 
 	router.NotFoundHandler = http.HandlerFunc(NotFoundHandler)

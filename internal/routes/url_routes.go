@@ -11,7 +11,7 @@ import (
 )
 
 func RegisterUrlRoutes(router *mux.Router, db *pgxpool.Pool) {
-	urlHandler := handlers.UrlHandler{UrlService: &services.UrlService{UrlRepository: repository.NewUrlRepository(db)}}
+	urlHandler := &handlers.UrlHandler{UrlService: &services.UrlService{UrlRepository: repository.NewUrlRepository(db)}}
 
 	router.HandleFunc("/v1/urls", urlHandler.Create).Methods(http.MethodPost)
 }

@@ -33,6 +33,7 @@ func (app *App) InitApp(configPath string) error {
 		return fmt.Errorf("error connecting to DB: %v\n", err)
 	}
 	app.dbConn = dbConn
+	app.router = mux.NewRouter()
 	routes.RegisterRoutes(app.router, app.dbConn.DB)
 	return nil
 }
