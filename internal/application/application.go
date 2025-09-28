@@ -33,7 +33,7 @@ func (app *App) InitApp(configPath string) error {
 		return fmt.Errorf("error connecting to DB: %v\n", err)
 	}
 	app.dbConn = dbConn
-	app.registerRoutes()
+	routes.RegisterRoutes(app.router, app.dbConn.DB)
 	return nil
 }
 
@@ -62,8 +62,4 @@ func (app *App) Run() {
 	if err != nil {
 		log.Fatalf("Server error: %v", err)
 	}
-}
-
-func (app *App) registerRoutes() {
-	routes.RegisterUrlRoutes(app.router, app.dbConn.DB)
 }
