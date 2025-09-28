@@ -14,4 +14,5 @@ func main() {
 	}
 	defer app.OnStop()
 
+	app.Run()
 }
