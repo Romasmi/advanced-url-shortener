@@ -5,4 +5,4 @@ database:
   maxConnectionLifetime: 60 # seconds
   maxConnectionIdleTime: 1 # minutes
 server:
-  port: 8080
+  port: 8000
