@@ -31,7 +31,7 @@ func NewUrlRepository(db *pgxpool.Pool) *UrlRepository {
 
 func (r *UrlRepository) Create(ctx context.Context, url *models.Url) (*models.Url, error) {
 	query := fmt.Sprintf(`
-		INSERT INTO %v (id, original_url, short_url)
+		INSERT INTO %v (id, original_url, code)
 		VALUES ($1, $2, $3)
 		RETURNING *
 	`, UrlsTable)
