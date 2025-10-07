@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"shorturl/internal/config"
-	"shorturl/internal/utils"
 	"time"
+
+	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/utils"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

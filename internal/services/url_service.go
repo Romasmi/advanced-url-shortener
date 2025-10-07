@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"shorturl/internal/config"
-	"shorturl/internal/models"
-	"shorturl/internal/repository"
+	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/models"
+	"github.com/Romasmi/advanced-url-shortener/internal/repository"
 
 	"github.com/xyproto/randomstring"
 )

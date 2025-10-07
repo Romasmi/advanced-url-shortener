@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"shorturl/internal/application"
+
+	"github.com/Romasmi/advanced-url-shortener/internal/application"
 )
 
 func main() {

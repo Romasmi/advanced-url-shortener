@@ -2,10 +2,11 @@ package routes
 
 import (
 	"net/http"
-	"shorturl/internal/config"
-	"shorturl/internal/handlers"
-	"shorturl/internal/repository"
-	"shorturl/internal/services"
+
+	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/handlers"
+	"github.com/Romasmi/advanced-url-shortener/internal/repository"
+	"github.com/Romasmi/advanced-url-shortener/internal/services"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"

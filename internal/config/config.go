@@ -2,8 +2,9 @@ package config
 
 import (
 	"reflect"
-	"shorturl/internal/utils"
 	"strings"
+
+	"github.com/Romasmi/advanced-url-shortener/internal/utils"
 
 	"github.com/spf13/viper"
 )

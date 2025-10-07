@@ -16,3 +16,9 @@ In a root folder start a local docker env
 ```shell
     docker compose -f ./deployment/local/docker-compose.yml up -d
 ```
+
+## Resources
+| name              | url          |
+|-------------------|--------------|
+| API               | `http://localhost:80` |
+| Traefik dashboard | `http://localhost:8080` |
