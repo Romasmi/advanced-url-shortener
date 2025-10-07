@@ -69,7 +69,12 @@ func (r *UrlRepository) getByColumn(ctx context.Context, columnName, value strin
     `, UrlsTable, columnName)
 
 	var url models.Url
-	err := r.db.QueryRow(ctx, query, value).Scan(&url)
+	err := r.db.QueryRow(ctx, query, value).Scan(
+		&url.ID,
+		&url.OriginalUrl,
+		&url.Code,
+		&url.CreatedAt,
+	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, ErrNotFound
