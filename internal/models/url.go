@@ -1,9 +1,13 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	uuid "github.com/samborkent/uuidv7"
+)
 
 type Url struct {
-	ID          string    `json:"id"`
+	ID          uuid.UUID `json:"id"`
 	OriginalUrl string    `json:"original_url"`
 	Code        string    `json:"code"`
 	CreatedAt   time.Time `json:"created_at"`

@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
 	"github.com/Romasmi/advanced-url-shortener/internal/models"
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
+	uuid "github.com/samborkent/uuidv7"
 
 	"github.com/xyproto/randomstring"
 )
@@ -23,7 +25,7 @@ func (s *UrlService) Create(ctx context.Context, url string) (*models.Url, error
 	}
 
 	return s.UrlRepository.Create(ctx, &models.Url{
-		ID:          "some id",
+		ID:          uuid.New(),
 		OriginalUrl: url,
 		Code:        code,
 	})

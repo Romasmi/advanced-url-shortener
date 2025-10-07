@@ -34,7 +34,7 @@ func (h *UrlHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 		// TODO log error
 		if err != nil {
-			fmt.Printf("Error while url creation: %v", err)
+			fmt.Printf("Error while url creation: %v\n", err)
 			http.Error(w, "internal error - try again", http.StatusInternalServerError)
 		}
 	}
