@@ -1,4 +1,4 @@
-module shorturl
+module github.com/Romasmi/advanced-url-shortener
 
 go 1.25.1
 

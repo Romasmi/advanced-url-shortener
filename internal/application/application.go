@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"shorturl/internal/config"
-	"shorturl/internal/database"
-	"shorturl/internal/routes"
 	"strconv"
+
+	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/database"
+	"github.com/Romasmi/advanced-url-shortener/internal/routes"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"

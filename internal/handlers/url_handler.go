@@ -5,8 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"shorturl/internal/repository"
-	"shorturl/internal/services"
+
+	"github.com/Romasmi/advanced-url-shortener/internal/repository"
+	"github.com/Romasmi/advanced-url-shortener/internal/services"
 )
 
 type UrlHandler struct {

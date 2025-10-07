@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"shorturl/internal/models"
+
+	"github.com/Romasmi/advanced-url-shortener/internal/models"
 
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"

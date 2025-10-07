@@ -2,8 +2,8 @@ package routes
 
 import (
 	"encoding/json"
+	"github.com/Romasmi/advanced-url-shortener/internal/config"
 	"net/http"
-	"shorturl/internal/config"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
