@@ -1,3 +1,4 @@
+name: url-shortener
 services:
   traefik:
     image: "traefik:v3.4"
