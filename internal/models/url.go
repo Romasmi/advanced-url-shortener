@@ -1,15 +1,31 @@
 package models
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+
+	uuid "github.com/samborkent/uuidv7"
+)
 
 type Url struct {
-	ID          string    `json:"id"`
-	OriginalUrl string    `json:"original_url"`
+	ID          uuid.UUID `json:"id,string"`
+	OriginalUrl string    `json:"originalUrl"`
 	Code        string    `json:"code"`
-	CreatedAt   time.Time `json:"created_at"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 type UrlCreate struct {
-	OriginalUrl string `json:"original_url"`
+	OriginalUrl string `json:"originalUrl"`
 	Code        string `json:"code"`
+}
+
+func (u Url) MarshalJSON() ([]byte, error) {
+	type Alias Url
+	return json.Marshal(&struct {
+		ID string `json:"id"`
+		*Alias
+	}{
+		ID:    u.ID.String(),
+		Alias: (*Alias)(&u),
+	})
 }

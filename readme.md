@@ -4,6 +4,7 @@
 - For sure, url shortening;
 - Metrics - clicks, user data etc;
   - Metrics are stored in Clickhouse and delivered there via event-sourcing by Kafka.
+- Logs in ELK
 
 ## How to run locally
 
