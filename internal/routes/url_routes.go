@@ -17,4 +17,5 @@ func RegisterUrlRoutes(router *mux.Router, db *pgxpool.Pool, config *config.Conf
 	urlHandler := &handlers.UrlHandler{UrlService: urlService}
 
 	router.HandleFunc("/v1/urls", urlHandler.Create).Methods(http.MethodPost)
+	router.HandleFunc("/s/{shorUrlCode}", urlHandler.RedirectUserToOriginalUrl).Methods(http.MethodGet)
 }
