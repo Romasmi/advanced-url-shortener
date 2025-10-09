@@ -36,6 +36,10 @@ func (s *UrlService) GetByOriginalUrl(ctx context.Context, originalUrl string) (
 	return s.UrlRepository.GetByOriginalUrl(ctx, originalUrl)
 }
 
+func (s *UrlService) GetByCode(ctx context.Context, code string) (*models.Url, error) {
+	return s.UrlRepository.GetByCode(ctx, code)
+}
+
 func (s *UrlService) generateUniqueCode(ctx context.Context, maxAttempts uint) (string, error) {
 	for i := 0; i < int(maxAttempts); i++ {
 		randomString := randomstring.CookieFriendlyString(int(s.Config.App.UrlCodeLength))

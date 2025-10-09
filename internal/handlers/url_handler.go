@@ -8,6 +8,7 @@ import (
 
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
 	"github.com/Romasmi/advanced-url-shortener/internal/services"
+	"github.com/gorilla/mux"
 )
 
 type UrlHandler struct {
@@ -52,4 +53,16 @@ func (h *UrlHandler) Create(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("error while encoding responce %v", err)
 	}
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *UrlHandler) RedirectUserToOriginalUrl(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	code := vars["shorUrlCode"]
+	url, err := h.UrlService.GetByCode(r.Context(), code)
+	if err != nil || url == nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Errorf("Unexpected error while retrieveing original URL: %v", err)
+		return
+	}
+	http.Redirect(w, r, url.OriginalUrl, http.StatusMovedPermanently)
 }
