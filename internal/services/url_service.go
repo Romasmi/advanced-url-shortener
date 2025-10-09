@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
 	"github.com/Romasmi/advanced-url-shortener/internal/models"
@@ -47,4 +48,9 @@ func (s *UrlService) generateUniqueCode(ctx context.Context, maxAttempts uint) (
 		}
 	}
 	return "", fmt.Errorf("failed to generated unique code after %v attempts", maxAttempts)
+}
+
+func (s *UrlService) GetUrlShortUrl(code string) string {
+	domain := strings.TrimSuffix(s.Config.App.PublicDomain, "/")
+	return domain + "/s/" + code
 }

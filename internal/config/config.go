@@ -30,6 +30,7 @@ type ServerConfig struct {
 type App struct {
 	UrlCodeLength uint
 	MaxAttempts   uint
+	PublicDomain  string
 }
 
 func bindEnvRecursive(viperInstance *viper.Viper, prefix string, val reflect.Value) error {
