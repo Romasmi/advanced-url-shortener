@@ -9,3 +9,4 @@ server:
 app:
   urlCodeLength: 8
   maxAttempts: 10
+  publicDomain: "http://localhost:8000"

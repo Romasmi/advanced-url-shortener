@@ -18,6 +18,10 @@ type CreateUrlRequest struct {
 	Url string `json:"url"`
 }
 
+type CreateUrlResponse struct {
+	ShortUrl string `json:"shortUrl"`
+}
+
 func (h *UrlHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var requestPayload CreateUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
@@ -39,7 +43,10 @@ func (h *UrlHandler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err = json.NewEncoder(w).Encode(newUrl)
+	response := &CreateUrlResponse{
+		ShortUrl: h.UrlService.GetUrlShortUrl(newUrl.Code),
+	}
+	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
 		// TODO log error
 		fmt.Printf("error while encoding responce %v", err)
