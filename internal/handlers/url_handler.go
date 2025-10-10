@@ -60,6 +60,10 @@ func (h *UrlHandler) RedirectUserToOriginalUrl(w http.ResponseWriter, r *http.Re
 	code := vars["shorUrlCode"]
 	url, err := h.UrlService.GetByCode(r.Context(), code)
 	if err != nil || url == nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Errorf("Unexpected error while retrieveing original URL: %v", err)
 		return
