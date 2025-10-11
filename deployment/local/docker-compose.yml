@@ -30,7 +30,45 @@ services:
       - "traefik.http.routers.db.entrypoints=db"
     ports:
       - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: "redis:alpine3.22"
+    container_name: "url-shortener-redis"
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    volumes:
+      - redis:/data
+    env_file:
+      - ./.env
+    networks:
+      - url-shortener
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.db.rule=Host(`redis.docker.localhost`)"
+      - "traefik.http.routers.db.entrypoints=redis"
+    ports:
+      - 6379:6379
+    command: >
+      sh -c '
+        mkdir -p /usr/local/etc/redis &&
+        echo "bind 0.0.0.0" > /usr/local/etc/redis/redis.conf &&
+        echo "requirepass $REDIS_PASSWORD" >> /usr/local/etc/redis/redis.conf &&
+        echo "user default on nopass ~* +@all" > /usr/local/etc/redis/users.acl &&
+        echo "user $REDIS_USER on >$REDIS_USER_PASSWORD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+        redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
+      '
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "$REDIS_PASSWORD", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 volumes:
   db:
+  redis:
 networks:
   url-shortener:
