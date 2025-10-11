@@ -10,12 +10,12 @@ import (
 )
 
 type Config struct {
-	Database DatabaseConfig
-	Server   ServerConfig
+	Database Database
+	Server   Server
 	App      App
 }
 
-type DatabaseConfig struct {
+type Database struct {
 	URL                   string
 	MaxConnections        uint
 	MinConnections        uint
@@ -23,7 +23,7 @@ type DatabaseConfig struct {
 	MaxConnectionIdleTime uint
 }
 
-type ServerConfig struct {
+type Server struct {
 	Port uint
 }
 
