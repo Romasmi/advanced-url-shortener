@@ -10,12 +10,13 @@ import (
 )
 
 type Config struct {
-	Database DatabaseConfig
-	Server   ServerConfig
+	Database Database
+	Server   Server
 	App      App
+	Redis    Redis
 }
 
-type DatabaseConfig struct {
+type Database struct {
 	URL                   string
 	MaxConnections        uint
 	MinConnections        uint
@@ -23,7 +24,13 @@ type DatabaseConfig struct {
 	MaxConnectionIdleTime uint
 }
 
-type ServerConfig struct {
+type Redis struct {
+	Host     string
+	Username string
+	Password string
+}
+
+type Server struct {
 	Port uint
 }
 

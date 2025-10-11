@@ -7,13 +7,19 @@ import (
 	"github.com/Romasmi/advanced-url-shortener/internal/handlers"
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
 	"github.com/Romasmi/advanced-url-shortener/internal/services"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/gorilla/mux"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterUrlRoutes(router *mux.Router, db *pgxpool.Pool, config *config.Config) {
-	urlService := &services.UrlService{UrlRepository: repository.NewUrlRepository(db), Config: config}
+func RegisterUrlRoutes(
+	router *mux.Router,
+	db *pgxpool.Pool,
+	redis *redis.Client,
+	config *config.Config,
+) {
+	urlService := &services.UrlService{UrlRepository: repository.NewUrlRepository(db, redis), Config: config}
 	urlHandler := &handlers.UrlHandler{UrlService: urlService}
 
 	router.HandleFunc("/v1/urls", urlHandler.Create).Methods(http.MethodPost)

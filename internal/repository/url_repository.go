@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/Romasmi/advanced-url-shortener/internal/models"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
@@ -14,7 +16,8 @@ import (
 )
 
 type UrlRepository struct {
-	db *pgxpool.Pool
+	db    *pgxpool.Pool
+	redis *redis.Client
 }
 
 var (
@@ -24,9 +27,10 @@ var (
 
 const UrlsTable = "urls"
 
-func NewUrlRepository(db *pgxpool.Pool) *UrlRepository {
+func NewUrlRepository(db *pgxpool.Pool, redis *redis.Client) *UrlRepository {
 	return &UrlRepository{
-		db: db,
+		db:    db,
+		redis: redis,
 	}
 }
 
@@ -57,7 +61,20 @@ func (r *UrlRepository) GetByOriginalUrl(ctx context.Context, originalUrl string
 }
 
 func (r *UrlRepository) GetByCode(ctx context.Context, code string) (*models.Url, error) {
-	return r.getByColumn(ctx, "code", code)
+	cachedVal, err := r.redis.Get(ctx, code).Result()
+	if errors.Is(err, redis.Nil) {
+		value, err := r.getByColumn(ctx, "code", code)
+		if value != nil && err == nil {
+			r.redis.Set(ctx, code, value.OriginalUrl, time.Hour)
+		}
+		return value, err
+	} else if err != nil {
+		fmt.Printf("Unexpected Redis error %v\n", err)
+	}
+	// TODO marshal and store a model in cache instead of just origin URL
+	return &models.Url{
+		OriginalUrl: cachedVal,
+	}, err
 }
 
 func (r *UrlRepository) getByColumn(ctx context.Context, columnName, value string) (*models.Url, error) {
