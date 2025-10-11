@@ -36,11 +36,12 @@ func (app *App) InitApp(configPath string) error {
 	}
 
 	redisConn := &redis.RedisConnection{Config: envConfig}
+	redisConn.Connect()
 
 	app.DbConn = dbConn
 	app.RedisConn = redisConn
 	app.router = mux.NewRouter()
-	routes.RegisterRoutes(app.router, app)
+	routes.RegisterRoutes(app.router, app.DbConn.DB, app.RedisConn.Rdb, app.Config)
 	return nil
 }
 
