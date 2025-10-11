@@ -3,17 +3,16 @@ package routes
 import (
 	"net/http"
 
-	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/application"
 	"github.com/Romasmi/advanced-url-shortener/internal/handlers"
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
 	"github.com/Romasmi/advanced-url-shortener/internal/services"
 
 	"github.com/gorilla/mux"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterUrlRoutes(router *mux.Router, db *pgxpool.Pool, config *config.Config) {
-	urlService := &services.UrlService{UrlRepository: repository.NewUrlRepository(db), Config: config}
+func RegisterUrlRoutes(router *mux.Router, deps *application.App) {
+	urlService := &services.UrlService{UrlRepository: repository.NewUrlRepository(deps.DbConn.DB, deps.RedisConn.Rdb), Config: deps.Config}
 	urlHandler := &handlers.UrlHandler{UrlService: urlService}
 
 	router.HandleFunc("/v1/urls", urlHandler.Create).Methods(http.MethodPost)

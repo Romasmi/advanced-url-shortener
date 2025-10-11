@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/Romasmi/advanced-url-shortener/internal/models"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
@@ -14,7 +15,8 @@ import (
 )
 
 type UrlRepository struct {
-	db *pgxpool.Pool
+	db    *pgxpool.Pool
+	redis *redis.Client
 }
 
 var (
@@ -24,9 +26,10 @@ var (
 
 const UrlsTable = "urls"
 
-func NewUrlRepository(db *pgxpool.Pool) *UrlRepository {
+func NewUrlRepository(db *pgxpool.Pool, redis *redis.Client) *UrlRepository {
 	return &UrlRepository{
-		db: db,
+		db:    db,
+		redis: redis,
 	}
 }
 

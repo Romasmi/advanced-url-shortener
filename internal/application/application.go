@@ -8,6 +8,7 @@ import (
 
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
 	"github.com/Romasmi/advanced-url-shortener/internal/database"
+	"github.com/Romasmi/advanced-url-shortener/internal/redis"
 	"github.com/Romasmi/advanced-url-shortener/internal/routes"
 
 	"github.com/gorilla/handlers"
@@ -15,8 +16,9 @@ import (
 )
 
 type App struct {
-	dbConn *database.DbConnection
-	config *config.Config
+	DbConn    *database.DbConnection
+	RedisConn *redis.RedisConnection
+	Config    *config.Config
 	// TODO add logger
 	router *mux.Router
 }
@@ -24,23 +26,27 @@ type App struct {
 func (app *App) InitApp(configPath string) error {
 	envConfig, err := config.LoadConfig(configPath)
 	if err != nil {
-		return fmt.Errorf("error loading config: %v\n", err)
+		return fmt.Errorf("error loading Config: %v\n", err)
 	}
-	app.config = envConfig
+	app.Config = envConfig
 
 	dbConn := &database.DbConnection{Config: envConfig}
-	err = dbConn.Connect()
-	if err != nil {
+	if err = dbConn.Connect(); err != nil {
 		return fmt.Errorf("error connecting to DB: %v\n", err)
 	}
-	app.dbConn = dbConn
+
+	redisConn := &redis.RedisConnection{Config: envConfig}
+
+	app.DbConn = dbConn
+	app.RedisConn = redisConn
 	app.router = mux.NewRouter()
-	routes.RegisterRoutes(app.router, app.dbConn.DB, app.config)
+	routes.RegisterRoutes(app.router, app)
 	return nil
 }
 
 func (app *App) OnStop() {
-	app.dbConn.Close()
+	app.DbConn.Close()
+	app.RedisConn.Close()
 }
 
 func (app *App) Run() {
@@ -59,7 +65,7 @@ func (app *App) Run() {
 	origins := handlers.AllowedOrigins([]string{"*"})
 
 	err := http.ListenAndServe(
-		":"+strconv.Itoa(int(app.config.Server.Port)),
+		":"+strconv.Itoa(int(app.Config.Server.Port)),
 		handlers.CORS(credentials, methods, origins, headers)(app.router))
 	if err != nil {
 		log.Fatalf("Server error: %v", err)

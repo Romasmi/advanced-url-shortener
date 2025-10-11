@@ -2,23 +2,22 @@ package routes
 
 import (
 	"encoding/json"
-	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/application"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type NotFoundResponse struct {
 	Error string `json:"error"`
 }
 
-func RegisterRoutes(router *mux.Router, db *pgxpool.Pool, config *config.Config) {
+func RegisterRoutes(router *mux.Router, deps *application.App) {
 	if router == nil {
 		panic("router must be initialized before routes registration")
 	}
 
-	RegisterUrlRoutes(router, db, config)
+	RegisterUrlRoutes(router, deps)
 
 	router.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
 }
