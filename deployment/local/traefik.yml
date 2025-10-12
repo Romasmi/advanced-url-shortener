@@ -1,14 +1,6 @@
 entryPoints:
   web:
     address: ":80"
-  db:
-    address: ":5432"
-  redis:
-    address: ":6379"
-  zookeeper:
-    address: ":22181"
-  kafka:
-    address: ":9092"
   kafka-ui:
     address: ":8082"
 api:
