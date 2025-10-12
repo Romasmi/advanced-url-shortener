@@ -67,6 +67,48 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    env_file:
+      - ./.env
+    ports:
+      - 22181:2181
+    networks:
+      - url-shortener
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.db.rule=Host(`zookeeper.docker.localhost`)"
+      - "traefik.http.routers.db.entrypoints=zookeeper"
+  kafka:
+    image: confluentinc/cp-server:7.2.1
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9997:9997"
+    env_file:
+      - ./.env
+    networks:
+      - url-shortener
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.db.rule=Host(`kafka.docker.localhost`)"
+      - "traefik.http.routers.db.entrypoints=kafka"
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8082:8080
+    env_file:
+      - ./.env
+    networks:
+      - url-shortener
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.db.rule=Host(`kafka-ui.docker.localhost`)"
+      - "traefik.http.routers.db.entrypoints=kafka-ui"
 volumes:
   db:
   redis:
