@@ -24,10 +24,6 @@ services:
       - url-shortener
     env_file:
       - ./.env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.db.rule=Host(`db.docker.localhost`)"
-      - "traefik.http.routers.db.entrypoints=db"
     ports:
       - 5432:5432
     healthcheck:
@@ -47,10 +43,6 @@ services:
       - ./.env
     networks:
       - url-shortener
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.db.rule=Host(`redis.docker.localhost`)"
-      - "traefik.http.routers.db.entrypoints=redis"
     ports:
       - 6379:6379
     command: >
@@ -75,10 +67,6 @@ services:
       - 22181:2181
     networks:
       - url-shortener
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.db.rule=Host(`zookeeper.docker.localhost`)"
-      - "traefik.http.routers.db.entrypoints=zookeeper"
   kafka:
     image: confluentinc/cp-server:7.2.1
     hostname: kafka
@@ -92,10 +80,6 @@ services:
       - ./.env
     networks:
       - url-shortener
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.db.rule=Host(`kafka.docker.localhost`)"
-      - "traefik.http.routers.db.entrypoints=kafka"
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
