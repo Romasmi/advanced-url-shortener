@@ -16,11 +16,11 @@ import (
 
 type UrlService struct {
 	UrlRepository *repository.UrlRepository
-	Config        *config.Config
+	Config        *config.App
 }
 
 func (s *UrlService) Create(ctx context.Context, url string) (*models.Url, error) {
-	code, err := s.generateUniqueCode(ctx, s.Config.App.MaxAttempts)
+	code, err := s.generateUniqueCode(ctx, s.Config.MaxAttempts)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (s *UrlService) GetByCode(ctx context.Context, code string) (*models.Url, e
 
 func (s *UrlService) generateUniqueCode(ctx context.Context, maxAttempts uint) (string, error) {
 	for i := 0; i < int(maxAttempts); i++ {
-		randomString := randomstring.CookieFriendlyString(int(s.Config.App.UrlCodeLength))
+		randomString := randomstring.CookieFriendlyString(int(s.Config.UrlCodeLength))
 		_, err := s.UrlRepository.GetByCode(ctx, randomString)
 		if err != nil {
 			if errors.Is(err, repository.ErrNotFound) {
@@ -55,6 +55,6 @@ func (s *UrlService) generateUniqueCode(ctx context.Context, maxAttempts uint) (
 }
 
 func (s *UrlService) GetUrlShortUrl(code string) string {
-	domain := strings.TrimSuffix(s.Config.App.PublicDomain, "/")
+	domain := strings.TrimSuffix(s.Config.PublicDomain, "/")
 	return domain + "/s/" + code
 }

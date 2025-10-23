@@ -9,14 +9,14 @@ import (
 
 type RedisConnection struct {
 	Rdb    *redis.Client
-	Config *config.Config
+	Config *config.Redis
 }
 
 func (c *RedisConnection) Connect() {
 	c.Rdb = redis.NewClient(&redis.Options{
-		Addr:     c.Config.Redis.Host,
-		Username: c.Config.Redis.Username,
-		Password: c.Config.Redis.Password,
+		Addr:     c.Config.Host,
+		Username: c.Config.Username,
+		Password: c.Config.Password,
 		DB:       0,
 	})
 }

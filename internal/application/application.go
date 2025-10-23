@@ -30,12 +30,12 @@ func (app *App) InitApp(configPath string) error {
 	}
 	app.Config = envConfig
 
-	dbConn := &database.DbConnection{Config: envConfig}
+	dbConn := &database.DbConnection{Config: &envConfig.Database}
 	if err = dbConn.Connect(); err != nil {
 		return fmt.Errorf("error connecting to DB: %v\n", err)
 	}
 
-	redisConn := &redis.RedisConnection{Config: envConfig}
+	redisConn := &redis.RedisConnection{Config: &envConfig.Redis}
 	redisConn.Connect()
 
 	app.DbConn = dbConn
