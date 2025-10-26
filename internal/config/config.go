@@ -14,6 +14,7 @@ type Config struct {
 	Server   Server
 	App      App
 	Redis    Redis
+	Kafka    Kafka
 }
 
 type Database struct {
@@ -28,6 +29,10 @@ type Redis struct {
 	Host     string
 	Username string
 	Password string
+}
+
+type Kafka struct {
+	Brokers string
 }
 
 type Server struct {
