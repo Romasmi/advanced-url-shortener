@@ -9,6 +9,7 @@ import (
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
 	"github.com/Romasmi/advanced-url-shortener/internal/models"
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	uuid "github.com/samborkent/uuidv7"
 
 	"github.com/xyproto/randomstring"
@@ -17,6 +18,7 @@ import (
 type UrlService struct {
 	UrlRepository *repository.UrlRepository
 	Config        *config.App
+	KafkaProducer *kafka.Producer
 }
 
 func (s *UrlService) Create(ctx context.Context, url string) (*models.Url, error) {
