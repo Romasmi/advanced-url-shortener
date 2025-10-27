@@ -11,12 +11,12 @@ import (
 type KafkaConnection struct {
 	Consumer *kafka.Consumer
 	Producer *kafka.Producer
-	Config   *config.Config
+	Config   *config.Kafka
 }
 
 func (k *KafkaConnection) ConnectProducer() error {
 	configMap := &kafka.ConfigMap{
-		"bootstrap.severs": k.Config.Kafka.Brokers,
+		"bootstrap.severs": k.Config.Brokers,
 	}
 
 	producer, err := kafka.NewProducer(configMap)
@@ -31,7 +31,7 @@ func (k *KafkaConnection) ConnectProducer() error {
 
 func (k *KafkaConnection) ConnectConsumer() error {
 	configMap := &kafka.ConfigMap{
-		"bootstrap.severs": k.Config.Kafka.Brokers,
+		"bootstrap.severs": k.Config.Brokers,
 	}
 	consumer, err := kafka.NewConsumer(configMap)
 	if err != nil {
