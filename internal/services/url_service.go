@@ -2,14 +2,15 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/kafka"
 	"github.com/Romasmi/advanced-url-shortener/internal/models"
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	uuid "github.com/samborkent/uuidv7"
 
 	"github.com/xyproto/randomstring"
@@ -18,7 +19,7 @@ import (
 type UrlService struct {
 	UrlRepository *repository.UrlRepository
 	Config        *config.App
-	KafkaProducer *kafka.Producer
+	Kafka         *kafka.KafkaConnection
 }
 
 func (s *UrlService) Create(ctx context.Context, url string) (*models.Url, error) {
@@ -42,7 +43,7 @@ func (s *UrlService) GetByCode(ctx context.Context, code string) (*models.Url, e
 	return s.UrlRepository.GetByCode(ctx, code)
 }
 
-func (s UrlService) GetRedirectUrl(ctx context.Context, code string) (string, error) {
+func (s *UrlService) GetRedirectUrl(ctx context.Context, code string, userInfo models.UserInfo) (string, error) {
 	url, err := s.GetByCode(ctx, code)
 	if err != nil || url == nil {
 		if errors.Is(err, repository.ErrNotFound) {
@@ -51,6 +52,28 @@ func (s UrlService) GetRedirectUrl(ctx context.Context, code string) (string, er
 		fmt.Printf("unexpected error while retrieveing original URL: %v\n", err)
 		return "", err
 	}
+	go func() {
+		clickEvent := models.ClickEvent{
+			EventID:   "",
+			Domain:    url.OriginalUrl,
+			Code:      code,
+			Timestamp: "",
+			UserAgent: userInfo.UserAgent,
+			IPAddress: userInfo.IPAddress,
+			Referrer:  userInfo.Referrer,
+		}
+		clickEventJson, err := json.Marshal(clickEvent)
+		if err != nil {
+			fmt.Printf("error while converting event data to JSON: %v", clickEventJson)
+			return
+		}
+
+		err = s.Kafka.Produce("url.clicks", []byte(code), clickEventJson)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
+
 	return url.OriginalUrl, nil
 }
 
