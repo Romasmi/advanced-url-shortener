@@ -58,15 +58,10 @@ func (h *UrlHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *UrlHandler) RedirectUserToOriginalUrl(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	code := vars["shorUrlCode"]
-	url, err := h.UrlService.GetByCode(r.Context(), code)
-	if err != nil || url == nil {
-		if errors.Is(err, repository.ErrNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Errorf("Unexpected error while retrieveing original URL: %v", err)
+	url, err := h.UrlService.GetRedirectUrl(r.Context(), code)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	http.Redirect(w, r, url.OriginalUrl, http.StatusMovedPermanently)
+	http.Redirect(w, r, url, http.StatusMovedPermanently)
 }

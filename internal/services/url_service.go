@@ -42,6 +42,18 @@ func (s *UrlService) GetByCode(ctx context.Context, code string) (*models.Url, e
 	return s.UrlRepository.GetByCode(ctx, code)
 }
 
+func (s UrlService) GetRedirectUrl(ctx context.Context, code string) (string, error) {
+	url, err := s.GetByCode(ctx, code)
+	if err != nil || url == nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			return "", err
+		}
+		fmt.Printf("unexpected error while retrieveing original URL: %v\n", err)
+		return "", err
+	}
+	return url.OriginalUrl, nil
+}
+
 func (s *UrlService) generateUniqueCode(ctx context.Context, maxAttempts uint) (string, error) {
 	for i := 0; i < int(maxAttempts); i++ {
 		randomString := randomstring.CookieFriendlyString(int(s.Config.UrlCodeLength))
