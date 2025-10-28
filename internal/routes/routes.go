@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
+	"github.com/Romasmi/advanced-url-shortener/internal/kafka"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 
@@ -19,13 +20,14 @@ func RegisterRoutes(
 	router *mux.Router,
 	db *pgxpool.Pool,
 	redis *redis.Client,
+	kafka *kafka.KafkaConnection,
 	config *config.Config,
 ) {
 	if router == nil {
 		panic("router must be initialized before routes registration")
 	}
 
-	RegisterUrlRoutes(router, db, redis, config)
+	RegisterUrlRoutes(router, db, redis, kafka, config)
 
 	router.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
 }

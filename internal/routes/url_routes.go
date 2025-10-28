@@ -5,6 +5,7 @@ import (
 
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
 	"github.com/Romasmi/advanced-url-shortener/internal/handlers"
+	"github.com/Romasmi/advanced-url-shortener/internal/kafka"
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
 	"github.com/Romasmi/advanced-url-shortener/internal/services"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,9 +18,14 @@ func RegisterUrlRoutes(
 	router *mux.Router,
 	db *pgxpool.Pool,
 	redis *redis.Client,
+	kafka *kafka.KafkaConnection,
 	config *config.Config,
 ) {
-	urlService := &services.UrlService{UrlRepository: repository.NewUrlRepository(db, redis), Config: config}
+	urlService := &services.UrlService{
+		UrlRepository: repository.NewUrlRepository(db, redis),
+		Config:        &config.App,
+		Kafka:         kafka,
+	}
 	urlHandler := &handlers.UrlHandler{UrlService: urlService}
 
 	router.HandleFunc("/v1/urls", urlHandler.Create).Methods(http.MethodPost)

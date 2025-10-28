@@ -14,6 +14,21 @@ type KafkaConnection struct {
 	Config   *config.Kafka
 }
 
+func CreateKafkaConnection(cfg *config.Kafka) (*KafkaConnection, error) {
+	connection := &KafkaConnection{
+		Config: cfg,
+	}
+	err := connection.ConnectProducer()
+	if err != nil {
+		return nil, fmt.Errorf("error while connection Kafka producer: %v\n", err)
+	}
+	err = connection.ConnectConsumer()
+	if err != nil {
+		return nil, fmt.Errorf("error while connection Kafka consumer: %v\n", err)
+	}
+	return connection, nil
+}
+
 func (k *KafkaConnection) ConnectProducer() error {
 	configMap := &kafka.ConfigMap{
 		"bootstrap.severs": k.Config.Brokers,
@@ -26,6 +41,22 @@ func (k *KafkaConnection) ConnectProducer() error {
 	k.Producer = producer
 	go k.handleDeliveryReports()
 
+	return nil
+}
+
+func (k *KafkaConnection) Produce(topic string, key, value []byte) error {
+	message := &kafka.Message{
+		TopicPartition: kafka.TopicPartition{
+			Topic:     &topic,
+			Partition: kafka.PartitionAny,
+		},
+		Key:   key,
+		Value: value,
+	}
+	err := k.Producer.Produce(message, nil)
+	if err != nil {
+		return fmt.Errorf("failed to produce message: %v", err)
+	}
 	return nil
 }
 

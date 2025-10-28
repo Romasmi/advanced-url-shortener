@@ -8,6 +8,7 @@ import (
 
 	"github.com/Romasmi/advanced-url-shortener/internal/config"
 	"github.com/Romasmi/advanced-url-shortener/internal/database"
+	"github.com/Romasmi/advanced-url-shortener/internal/kafka"
 	"github.com/Romasmi/advanced-url-shortener/internal/redis"
 	"github.com/Romasmi/advanced-url-shortener/internal/routes"
 
@@ -16,9 +17,10 @@ import (
 )
 
 type App struct {
-	DbConn    *database.DbConnection
-	RedisConn *redis.RedisConnection
-	Config    *config.Config
+	DbConn          *database.DbConnection
+	RedisConn       *redis.RedisConnection
+	KafkaConnection *kafka.KafkaConnection
+	Config          *config.Config
 	// TODO add logger
 	router *mux.Router
 }
@@ -38,16 +40,23 @@ func (app *App) InitApp(configPath string) error {
 	redisConn := &redis.RedisConnection{Config: &envConfig.Redis}
 	redisConn.Connect()
 
+	kafkaConnection, err := kafka.CreateKafkaConnection(&envConfig.Kafka)
+	if err != nil {
+		return nil
+	}
+
 	app.DbConn = dbConn
 	app.RedisConn = redisConn
+	app.KafkaConnection = kafkaConnection
 	app.router = mux.NewRouter()
-	routes.RegisterRoutes(app.router, app.DbConn.DB, app.RedisConn.Rdb, app.Config)
+	routes.RegisterRoutes(app.router, app.DbConn.DB, app.RedisConn.Rdb, app.KafkaConnection, app.Config)
 	return nil
 }
 
 func (app *App) OnStop() {
 	app.DbConn.Close()
 	app.RedisConn.Close()
+	app.KafkaConnection.Close()
 }
 
 func (app *App) Run() {

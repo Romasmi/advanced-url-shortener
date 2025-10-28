@@ -8,6 +8,7 @@ import (
 
 	"github.com/Romasmi/advanced-url-shortener/internal/repository"
 	"github.com/Romasmi/advanced-url-shortener/internal/services"
+	"github.com/Romasmi/advanced-url-shortener/internal/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -58,7 +59,7 @@ func (h *UrlHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *UrlHandler) RedirectUserToOriginalUrl(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	code := vars["shorUrlCode"]
-	url, err := h.UrlService.GetRedirectUrl(r.Context(), code)
+	url, err := h.UrlService.GetRedirectUrl(r.Context(), code, utils.ExtractUserInfo(r))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
